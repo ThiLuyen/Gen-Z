@@ -1,0 +1,1398 @@
+<!doctype html>
+<html lang="vi" class="h-full bg-slate-900">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gen-Z Lifestyle & MindHub | Không Gian Cho Thế Hệ Trẻ</title>
+    <link rel="stylesheet" href="index.css" />
+    <script src="index.js"></script>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <!-- Google Fonts - Inter -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.com/npm/chart.js"></script>
+    <!-- Firebase App (Core) & Auth -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+            colors: {
+              brand: {
+                50: "#f0f5ff",
+                100: "#e5edff",
+                400: "#818cf8",
+                500: "#6366f1",
+                600: "#4f46e5",
+                700: "#4338ca",
+                900: "#1e1b4b",
+              },
+              accent: {
+                pink: "#ec4899",
+                teal: "#14b8a6",
+                purple: "#a855f7",
+                amber: "#f59e0b",
+              },
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="h-full flex flex-col antialiased custom-scrollbar">
+    <!-- APP CONTAINER -->
+    <div id="app" class="flex-1 flex flex-col min-h-screen">
+      <!-- ==================== 1. AUTHENTICATION SECTION ==================== -->
+      <section
+        id="auth-section"
+        class="flex-1 flex items-center justify-center p-4 min-h-screen"
+      >
+        <div class="w-full max-w-md">
+          <!-- Brand Header -->
+          <div class="text-center mb-8">
+            <div
+              class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 mb-4 shadow-lg shadow-indigo-500/30"
+            >
+              <i class="fa-solid font-bold text-2xl text-white fa-compass"></i>
+            </div>
+            <h1
+              class="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent"
+            >
+              Gen Z & Lifestyle
+            </h1>
+            <p class="text-slate-400 text-sm mt-2">
+              Nơi kết nối Độc lập - Tự do - Phát triển - Bứt phá
+            </p>
+          </div>
+
+          <!-- Auth Card -->
+          <div
+            class="glass-panel p-8 rounded-3xl shadow-2xl relative overflow-hidden"
+          >
+            <!-- Auth Tabs Switcher -->
+            <div
+              class="flex bg-slate-800/80 p-1.5 rounded-2xl mb-6 border border-slate-700/50"
+            >
+              <button
+                id="tab-login-btn"
+                onclick="switchAuthTab('login')"
+                class="flex-1 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 text-white bg-indigo-600 shadow-sm"
+              >
+                Đăng Nhập
+              </button>
+              <button
+                id="tab-register-btn"
+                onclick="switchAuthTab('register')"
+                class="flex-1 py-2.5 text-sm font-medium rounded-xl transition-all duration-200 text-slate-400 hover:text-white"
+              >
+                Đăng Kỳ
+              </button>
+            </div>
+
+            <!-- Alert Container -->
+            <div
+              id="auth-alert"
+              class="hidden mb-4 p-3 rounded-xl text-xs font-medium flex items-center gap-2"
+            ></div>
+
+            <!-- LOGIN FORM -->
+            <form
+              id="login-form"
+              onsubmit="handleAuth(event, 'login')"
+              class="space-y-4"
+            >
+              <div>
+                <label
+                  class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2"
+                  >Email hoặc Tên người dùng</label
+                >
+                <div class="relative">
+                  <i
+                    class="fa-regular fa-envelope absolute left-4 top-3.5 text-slate-400 text-sm"
+                  ></i>
+                  <input
+                    type="text"
+                    id="login-email"
+                    required
+                    placeholder="genz@123.vn"
+                    class="w-full bg-slate-900/80 border border-slate-700 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
+                  />
+                </div>
+              </div>
+              <div>
+                <label
+                  class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2"
+                  >Mật khẩu</label
+                >
+                <div class="relative">
+                  <i
+                    class="fa-solid fa-lock absolute left-4 top-3.5 text-slate-400 text-sm"
+                  ></i>
+                  <input
+                    type="password"
+                    id="login-password"
+                    required
+                    placeholder="••••••••"
+                    class="w-full bg-slate-900/80 border border-slate-700 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
+                  />
+                </div>
+              </div>
+              <div
+                class="flex items-center justify-between text-xs text-slate-400"
+              >
+                <label class="flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked
+                    class="rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-indigo-500 mr-2"
+                  />
+                  Ghi nhớ đăng nhập
+                </label>
+                <a
+                  href="#"
+                  onclick="showNotice('Tính năng đang được phát triển')"
+                  class="text-indigo-400 hover:underline"
+                  >Quên mật khẩu?</a
+                >
+              </div>
+              <button
+                type="submit"
+                class="w-full py-3.5 rounded-xl font-semibold text-sm bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white shadow-lg shadow-indigo-600/30 transition-all duration-200 active:scale-[0.98]"
+              >
+                Đăng Nhập <i class="fa-solid fa-arrow-right ml-1"></i>
+              </button>
+            </form>
+
+            <!-- REGISTER FORM -->
+            <form
+              id="register-form"
+              onsubmit="handleAuth(event, 'register')"
+              class="space-y-4 hidden"
+            >
+              <div>
+                <label
+                  class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2"
+                  >Họ và Tên</label
+                >
+                <div class="relative">
+                  <i
+                    class="fa-regular fa-user absolute left-4 top-3.5 text-slate-400 text-sm"
+                  ></i>
+                  <input
+                    type="text"
+                    id="reg-name"
+                    required
+                    placeholder="Nguyễn Văn A"
+                    class="w-full bg-slate-900/80 border border-slate-700 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
+                  />
+                </div>
+              </div>
+              <div>
+                <label
+                  class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2"
+                  >Email</label
+                >
+                <div class="relative">
+                  <i
+                    class="fa-regular fa-envelope absolute left-4 top-3.5 text-slate-400 text-sm"
+                  ></i>
+                  <input
+                    type="email"
+                    id="reg-email"
+                    required
+                    placeholder="example@domain.com"
+                    class="w-full bg-slate-900/80 border border-slate-700 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
+                  />
+                </div>
+              </div>
+              <div>
+                <label
+                  class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2"
+                  >Mật khẩu</label
+                >
+                <div class="relative">
+                  <i
+                    class="fa-solid fa-lock absolute left-4 top-3.5 text-slate-400 text-sm"
+                  ></i>
+                  <input
+                    type="password"
+                    id="reg-password"
+                    required
+                    placeholder="Tối thiểu 6 ký tự"
+                    class="w-full bg-slate-900/80 border border-slate-700 rounded-xl pl-11 pr-4 py-3 text-sm text-white focus:outline-none focus:border-indigo-500 transition-colors"
+                  />
+                </div>
+              </div>
+              <button
+                type="submit"
+                class="w-full py-3.5 rounded-xl font-semibold text-sm bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg shadow-purple-600/30 transition-all duration-200 active:scale-[0.98]"
+              >
+                Tạo Tài Khoản Mới <i class="fa-solid fa-user-plus ml-1"></i>
+              </button>
+            </form>
+
+            <!-- Quick Demo Credentials -->
+            <div class="mt-6 pt-5 border-t border-slate-800 text-center">
+              <p class="text-xs text-slate-400">
+                Hoặc trải nghiệm nhanh không cần tạo tài khoản:
+              </p>
+              <button
+                onclick="fillDemoAccount()"
+                class="mt-2 text-xs text-indigo-400 hover:text-indigo-300 font-medium bg-indigo-950/60 border border-indigo-800/50 px-3 py-1.5 rounded-lg transition-colors"
+              >
+                <i class="fa-solid fa-bolt text-amber-400 mr-1"></i> Sử dụng Tài
+                khoản Demo
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================== 2. MAIN APPLICATION DASHBOARD ==================== -->
+      <div
+        id="main-app"
+        class="hidden flex-1 flex flex-col md:flex-row min-h-screen"
+      >
+        <!-- SIDEBAR NAVIGATION -->
+        <aside
+          class="w-full md:w-64 glass-panel border-r border-slate-800/80 flex flex-col shrink-0 z-20"
+        >
+          <!-- Sidebar Header -->
+          <div
+            class="p-5 border-b border-slate-800/80 flex items-center justify-between"
+          >
+            <div class="flex items-center space-x-3">
+              <div
+                class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center font-bold text-white shadow-md"
+              >
+                <i class="fa-solid fa-compass"></i>
+              </div>
+              <div>
+                <span
+                  class="font-bold text-sm tracking-wide bg-gradient-to-r from-indigo-300 to-purple-300 bg-clip-text text-transparent"
+                  >MINDHUB</span
+                >
+                <p class="text-[10px] text-slate-400 font-medium">
+                  LIFESTYLE PLATFORM
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Navigation Links -->
+          <nav class="flex-1 p-4 space-y-1.5 overflow-y-auto custom-scrollbar">
+            <button
+              onclick="switchTab('dashboard')"
+              id="nav-dashboard"
+              class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800/60 hover:text-white transition-all active-tab"
+            >
+              <i
+                class="fa-solid fa-chart-pie w-5 text-center text-indigo-400"
+              ></i>
+              <span>Tổng Quan Dashboard</span>
+            </button>
+            <button
+              onclick="switchTab('mental')"
+              id="nav-mental"
+              class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800/60 hover:text-white transition-all"
+            >
+              <i
+                class="fa-solid fa-heart-pulse w-5 text-center text-pink-400"
+              ></i>
+              <span>Tâm Lý & Chữa Lành</span>
+            </button>
+            <button
+              onclick="switchTab('finance')"
+              id="nav-finance"
+              class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800/60 hover:text-white transition-all"
+            >
+              <i
+                class="fa-solid fa-piggy-bank w-5 text-center text-emerald-400"
+              ></i>
+              <span>Tài Chính & FIRE</span>
+            </button>
+            <button
+              onclick="switchTab('lifestyle')"
+              id="nav-lifestyle"
+              class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800/60 hover:text-white transition-all"
+            >
+              <i class="fa-solid fa-leaf w-5 text-center text-teal-400"></i>
+              <span>Thân - Tâm - Trí</span>
+            </button>
+            <button
+              onclick="switchTab('travel')"
+              id="nav-travel"
+              class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800/60 hover:text-white transition-all"
+            >
+              <i
+                class="fa-solid fa-plane-departure w-5 text-center text-cyan-400"
+              ></i>
+              <span>Trải Nghiệm & Du Lịch</span>
+            </button>
+            <button
+              onclick="switchTab('entertainment')"
+              id="nav-entertainment"
+              class="nav-item w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-xs font-semibold text-slate-300 hover:bg-slate-800/60 hover:text-white transition-all"
+            >
+              <i class="fa-solid fa-mug-hot w-5 text-center text-amber-400"></i>
+              <span>Giải Trí & Gu Cafe</span>
+            </button>
+          </nav>
+
+          <!-- User Profile & Logout Widget -->
+          <div class="p-4 border-t border-slate-800/80 bg-slate-950/40">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <div
+                  class="w-9 h-9 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-indigo-400 font-bold text-xs"
+                  id="user-avatar"
+                >
+                  GenZ
+                </div>
+                <div class="overflow-hidden">
+                  <p
+                    class="text-xs font-semibold text-slate-200 truncate"
+                    id="user-display-name"
+                  >
+                    Người dùng GenZ
+                  </p>
+                  <p
+                    class="text-[10px] text-slate-400 truncate"
+                    id="user-display-email"
+                  >
+                    user@genz.vn
+                  </p>
+                </div>
+              </div>
+              <button
+                onclick="handleLogout()"
+                title="Đăng xuất"
+                class="p-2 text-slate-400 hover:text-rose-400 rounded-lg hover:bg-slate-800/60 transition-colors"
+              >
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+              </button>
+            </div>
+          </div>
+        </aside>
+
+        <!-- MAIN CONTENT DISPLAY AREA -->
+        <main class="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar">
+          <!-- 1. TAB: DASHBOARD OVERVIEW -->
+          <section id="tab-dashboard-content" class="space-y-6">
+            <!-- Banner Chào Mừng -->
+            <div
+              class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-900/60 via-purple-900/40 to-slate-900 border border-indigo-500/20 p-6 md:p-8"
+            >
+              <div class="relative z-10 max-w-2xl">
+                <span
+                  class="px-3 py-1 rounded-full text-[11px] font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30"
+                  >Lifeststyle & Mindset Gen-Z</span
+                >
+                <h2 class="text-2xl md:text-3xl font-extrabold mt-3 text-white">
+                  Chào mừng bạn quay trở lại,
+                  <span id="dash-welcome-name" class="text-indigo-400"
+                    >GenZ Member</span
+                  >!
+                </h2>
+                <p
+                  class="text-slate-300 text-xs md:text-sm mt-2 leading-relaxed"
+                >
+                  Độc lập tài chính, tự do trải nghiệm và chăm sóc sức khỏe tinh
+                  thần là chìa khóa mở ra tiềm năng trọn vẹn của tuổi 20.
+                </p>
+              </div>
+              <!-- Decorative Shapes -->
+              <div
+                class="absolute -right-10 -bottom-10 w-60 h-60 bg-indigo-600/10 rounded-full blur-3xl pointer-events-none"
+              ></div>
+            </div>
+
+            <!-- Daily Inspiring Quote Card -->
+            <div
+              class="glass-card p-5 rounded-2xl flex items-start gap-4 border-l-4 border-indigo-500"
+            >
+              <div
+                class="p-3 bg-indigo-500/10 rounded-xl text-indigo-400 shrink-0"
+              >
+                <i class="fa-solid fa-quote-left text-xl"></i>
+              </div>
+              <div>
+                <p
+                  class="text-xs md:text-sm font-medium text-slate-200 italic"
+                  id="daily-quote"
+                >
+                  "Đừng so sánh chương 1 của bạn với chương 20 của người khác.
+                  Hãy tập trung vào hành trình sống tự do & độc lập của chính
+                  mình."
+                </p>
+                <p class="text-[11px] text-slate-400 mt-1" id="daily-author">
+                  — Triết lý sống tự do tuổi 20
+                </p>
+              </div>
+            </div>
+
+            <!-- Stat Cards Overview Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div class="glass-card p-5 rounded-2xl">
+                <div
+                  class="flex items-center justify-between text-slate-400 mb-3"
+                >
+                  <span class="text-xs font-medium uppercase tracking-wider"
+                    >Tâm trạng hôm nay</span
+                  >
+                  <i class="fa-solid fa-face-smile text-pink-400"></i>
+                </div>
+                <div class="flex items-baseline justify-between">
+                  <span
+                    class="text-xl font-bold text-white"
+                    id="dash-mood-status"
+                    >Hào hứng</span
+                  >
+                  <span
+                    class="text-[10px] text-emerald-400 font-semibold bg-emerald-500/10 px-2 py-0.5 rounded-full"
+                    >+ Tích cực</span
+                  >
+                </div>
+              </div>
+
+              <div class="glass-card p-5 rounded-2xl">
+                <div
+                  class="flex items-center justify-between text-slate-400 mb-3"
+                >
+                  <span class="text-xs font-medium uppercase tracking-wider"
+                    >Thói quen hoàn thành</span
+                  >
+                  <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                </div>
+                <div class="flex items-baseline justify-between">
+                  <span
+                    class="text-xl font-bold text-white"
+                    id="dash-habit-status"
+                    >3/5 Thói quen</span
+                  >
+                  <span class="text-[10px] text-slate-400">60% Mục tiêu</span>
+                </div>
+              </div>
+
+              <div class="glass-card p-5 rounded-2xl">
+                <div
+                  class="flex items-center justify-between text-slate-400 mb-3"
+                >
+                  <span class="text-xs font-medium uppercase tracking-wider"
+                    >Tích lũy tự do (FIRE)</span
+                  >
+                  <i class="fa-solid fa-wallet text-indigo-400"></i>
+                </div>
+                <div class="flex items-baseline justify-between">
+                  <span class="text-xl font-bold text-white"
+                    >125.000.000 ₫</span
+                  >
+                  <span class="text-[10px] text-indigo-300 font-medium"
+                    >Mục tiêu 1.5B ₫</span
+                  >
+                </div>
+              </div>
+
+              <div class="glass-card p-5 rounded-2xl">
+                <div
+                  class="flex items-center justify-between text-slate-400 mb-3"
+                >
+                  <span class="text-xs font-medium uppercase tracking-wider"
+                    >Chuyến đi tiếp theo</span
+                  >
+                  <i class="fa-solid fa-compass text-cyan-400"></i>
+                </div>
+                <div class="flex items-baseline justify-between">
+                  <span class="text-xl font-bold text-white"
+                    >Đà Lạt Workation</span
+                  >
+                  <span class="text-[10px] text-cyan-300 font-medium"
+                    >Tháng 11</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Main Core Pillars Section -->
+            <h3 class="text-base font-bold text-slate-200 mt-6">
+              Cột Trụ Lối Sống & Định Hướng Phản Ánh
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div class="glass-card p-6 rounded-2xl">
+                <div
+                  class="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center mb-4"
+                >
+                  <i class="fa-solid fa-fire text-lg"></i>
+                </div>
+                <h4 class="font-bold text-sm text-white">
+                  Khát khao Độc lập & Tự do Trải nghiệm
+                </h4>
+                <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                  Tự chủ quyết định cuộc sống từ tài chính, công việc đến mối
+                  quan hệ. Sẵn sàng bứt phá khỏi vùng an toàn để thử nghiệm các
+                  phong cách sống linh hoạt, tích cực.
+                </p>
+              </div>
+
+              <div class="glass-card p-6 rounded-2xl">
+                <div
+                  class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center mb-4"
+                >
+                  <i class="fa-solid fa-brain text-lg"></i>
+                </div>
+                <h4 class="font-bold text-sm text-white">
+                  Vượt Qua "Khủng Hoảng Tuổi 20"
+                </h4>
+                <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                  Chuyển hóa áp lực đồng lứa (Peer Pressure) & hội chứng FOMO
+                  thành động lực nâng tầm bản thân. Luôn ưu tiên sức khỏe tinh
+                  thần và môi trường sống lành mạnh.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <!-- 2. TAB: TÂM LÝ & CHỮA LÀNH (MENTAL HEALTH) -->
+          <section id="tab-mental-content" class="space-y-6 hidden">
+            <div class="flex items-center justify-between">
+              <div>
+                <h2 class="text-xl font-bold text-white">
+                  Góc Chữa Lành & Giải Tỏa Áp Lực
+                </h2>
+                <p class="text-xs text-slate-400 mt-1">
+                  Lắng nghe nội tâm, giải tỏa Quarter-Life Crisis & xây dựng
+                  bình an nội tại
+                </p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <!-- Left Panel: Mood Tracker & Meditation -->
+              <div class="space-y-6">
+                <!-- Mood Check-in Widget -->
+                <div class="glass-card p-5 rounded-2xl">
+                  <h3
+                    class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-4"
+                  >
+                    Check-in Cảm Xúc Hôm Nay
+                  </h3>
+                  <div class="grid grid-cols-5 gap-2 text-center">
+                    <button
+                      onclick="setMood('Hào hứng', '😄')"
+                      class="p-3 bg-slate-800/80 hover:bg-indigo-600/30 rounded-xl transition border border-slate-700/50 flex flex-col items-center gap-1"
+                    >
+                      <span class="text-2xl">😄</span>
+                      <span class="text-[10px] text-slate-300 font-medium"
+                        >Hào hứng</span
+                      >
+                    </button>
+                    <button
+                      onclick="setMood('Bình yên', '🌿')"
+                      class="p-3 bg-slate-800/80 hover:bg-emerald-600/30 rounded-xl transition border border-slate-700/50 flex flex-col items-center gap-1"
+                    >
+                      <span class="text-2xl">🌿</span>
+                      <span class="text-[10px] text-slate-300 font-medium"
+                        >Bình yên</span
+                      >
+                    </button>
+                    <button
+                      onclick="setMood('Mệt mỏi', '🥱')"
+                      class="p-3 bg-slate-800/80 hover:bg-amber-600/30 rounded-xl transition border border-slate-700/50 flex flex-col items-center gap-1"
+                    >
+                      <span class="text-2xl">🥱</span>
+                      <span class="text-[10px] text-slate-300 font-medium"
+                        >Mệt mỏi</span
+                      >
+                    </button>
+                    <button
+                      onclick="setMood('Áp lực', '😰')"
+                      class="p-3 bg-slate-800/80 hover:bg-pink-600/30 rounded-xl transition border border-slate-700/50 flex flex-col items-center gap-1"
+                    >
+                      <span class="text-2xl">😰</span>
+                      <span class="text-[10px] text-slate-300 font-medium"
+                        >Áp lực</span
+                      >
+                    </button>
+                    <button
+                      onclick="setMood('Mơ hồ', '🌀')"
+                      class="p-3 bg-slate-800/80 hover:bg-purple-600/30 rounded-xl transition border border-slate-700/50 flex flex-col items-center gap-1"
+                    >
+                      <span class="text-2xl">🌀</span>
+                      <span class="text-[10px] text-slate-300 font-medium"
+                        >Mơ hồ</span
+                      >
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Mindfulness Audio Player -->
+                <div
+                  class="glass-card p-5 rounded-2xl bg-gradient-to-br from-indigo-950/40 to-slate-900 border border-indigo-800/30"
+                >
+                  <h3
+                    class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-3"
+                  >
+                    Âm Thanh Thiền & Tập Trung
+                  </h3>
+                  <div class="flex items-center space-x-4 mb-4">
+                    <div
+                      class="w-12 h-12 rounded-xl bg-indigo-600/30 text-indigo-400 flex items-center justify-center shrink-0"
+                    >
+                      <i class="fa-solid fa-water text-xl"></i>
+                    </div>
+                    <div class="overflow-hidden">
+                      <p
+                        class="text-xs font-semibold text-white truncate"
+                        id="sound-title"
+                      >
+                        Tiếng Mưa Chữa Lành & Sóng Não Beta
+                      </p>
+                      <p class="text-[10px] text-slate-400 mt-0.5">
+                        Giảm lo âu & hỗ trợ giấc ngủ
+                      </p>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-center space-x-6 pt-2">
+                    <button
+                      onclick="toggleAudio()"
+                      id="audio-play-btn"
+                      class="w-12 h-12 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center shadow-lg transition-transform active:scale-95"
+                    >
+                      <i class="fa-solid fa-play ml-0.5"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Panel: Mood History Chart & Stress Journal -->
+              <div class="lg:col-span-2 space-y-6">
+                <!-- Mood Chart Card -->
+                <div class="glass-card p-5 rounded-2xl">
+                  <h3
+                    class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-4"
+                  >
+                    Thống Kê Xu Hướng Năng Lượng Tinh Thần
+                  </h3>
+                  <div class="h-48 w-full">
+                    <canvas id="moodChart"></canvas>
+                  </div>
+                </div>
+
+                <!-- Stress Release Journal -->
+                <div class="glass-card p-5 rounded-2xl">
+                  <h3
+                    class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-3"
+                  >
+                    Nhật Ký Giải Tỏa & Trút Bỏ Trăn Trở
+                  </h3>
+                  <textarea
+                    id="journal-input"
+                    rows="3"
+                    placeholder="Hôm nay bạn gặp áp lực gì về công việc, đồng lứa hay định hướng sự nghiệp? Viết ra đây để xả bớt nặng nề..."
+                    class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl p-3 text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors"
+                  ></textarea>
+                  <div class="flex justify-between items-center mt-3">
+                    <span class="text-[10px] text-slate-400"
+                      >Nội dung của bạn được giữ riêng tư hoàn toàn</span
+                    >
+                    <button
+                      onclick="saveJournal()"
+                      class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold rounded-xl transition"
+                    >
+                      Lưu Nhật Ký
+                    </button>
+                  </div>
+
+                  <!-- Saved Journal Entries -->
+                  <div
+                    id="journal-list"
+                    class="mt-4 space-y-2 max-h-40 overflow-y-auto custom-scrollbar"
+                  >
+                    <div
+                      class="p-3 bg-slate-800/40 border border-slate-800 rounded-xl text-xs text-slate-300"
+                    >
+                      <p class="text-[10px] text-indigo-400 font-semibold mb-1">
+                        23/10/2026 - 20:30
+                      </p>
+                      <p class="italic">
+                        "Cảm thấy hơi ngợp trước thành công của đồng nghiệp,
+                        nhưng mình tin mỗi người có một lộ trình và thời điểm
+                        rực rỡ riêng."
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <!-- 3. TAB: TÀI CHÍNH CÁ NHÂN & SỰ NGHIỆP (FIRE & SELF-IMPROVEMENT) -->
+          <section id="tab-finance-content" class="space-y-6 hidden">
+            <div>
+              <h2 class="text-xl font-bold text-white">
+                Quản Lý Tài Chính & Lộ Trình FIRE
+              </h2>
+              <p class="text-xs text-slate-400 mt-1">
+                Hướng tới Tự Do Tài Chính (FIRE) & Tự chủ công việc bền vững
+              </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- FIRE Calculator Widget -->
+              <div class="glass-card p-6 rounded-2xl space-y-4">
+                <div
+                  class="flex items-center justify-between border-b border-slate-800 pb-3"
+                >
+                  <h3
+                    class="text-xs font-bold text-slate-200 uppercase tracking-wider"
+                  >
+                    Công Cụ Tính Mục Tiêu FIRE (Nghỉ Hưu Sớm)
+                  </h3>
+                  <i class="fa-solid fa-calculator text-emerald-400"></i>
+                </div>
+
+                <div class="space-y-3">
+                  <div>
+                    <label class="block text-[11px] text-slate-400 mb-1"
+                      >Chi tiêu trung bình hàng tháng (VNĐ):</label
+                    >
+                    <input
+                      type="number"
+                      id="fire-expense"
+                      value="15000000"
+                      class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-[11px] text-slate-400 mb-1"
+                      >Số tiền tiết kiệm hiện có (VNĐ):</label
+                    >
+                    <input
+                      type="number"
+                      id="fire-current"
+                      value="125000000"
+                      class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-[11px] text-slate-400 mb-1"
+                      >Khả năng tích lũy thêm mỗi tháng (VNĐ):</label
+                    >
+                    <input
+                      type="number"
+                      id="fire-monthly-save"
+                      value="8000000"
+                      class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+                  <button
+                    onclick="calculateFIRE()"
+                    class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl transition mt-2"
+                  >
+                    Tính Toán Lộ Trình FIRE
+                  </button>
+                </div>
+
+                <!-- Result Display -->
+                <div
+                  class="p-4 bg-emerald-950/30 border border-emerald-800/40 rounded-xl space-y-2 mt-4"
+                >
+                  <div class="flex justify-between items-center text-xs">
+                    <span class="text-slate-400"
+                      >Số tiền cần cho FIRE (Quy tắc 25):</span
+                    >
+                    <span
+                      class="font-bold text-emerald-400"
+                      id="fire-target-result"
+                      >4.500.000.000 ₫</span
+                    >
+                  </div>
+                  <div class="flex justify-between items-center text-xs">
+                    <span class="text-slate-400"
+                      >Thời gian dự kiến đạt mục tiêu:</span
+                    >
+                    <span class="font-bold text-white" id="fire-years-result"
+                      >~ 18.5 Năm</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- Smart Budgeting 50/30/20 & Book/Podcast Recommendations -->
+              <div class="space-y-6">
+                <!-- Budget Breakdown -->
+                <div class="glass-card p-5 rounded-2xl">
+                  <h3
+                    class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-3"
+                  >
+                    Mô Hình Quản Lý Ngân Sách 50/30/20
+                  </h3>
+                  <div class="space-y-2">
+                    <div>
+                      <div class="flex justify-between text-xs mb-1">
+                        <span class="text-slate-300"
+                          >50% Thiết Yếu (Tiền nhà, ăn uống, hóa đơn)</span
+                        >
+                        <span class="text-indigo-400 font-semibold">50%</span>
+                      </div>
+                      <div class="w-full bg-slate-800 rounded-full h-2">
+                        <div
+                          class="bg-indigo-500 h-2 rounded-full"
+                          style="width: 50%"
+                        ></div>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="flex justify-between text-xs mb-1">
+                        <span class="text-slate-300"
+                          >30% Trải Nghiệm & Cá Nhân (Du lịch, Cafe, Sở
+                          thích)</span
+                        >
+                        <span class="text-purple-400 font-semibold">30%</span>
+                      </div>
+                      <div class="w-full bg-slate-800 rounded-full h-2">
+                        <div
+                          class="bg-purple-500 h-2 rounded-full"
+                          style="width: 30%"
+                        ></div>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="flex justify-between text-xs mb-1">
+                        <span class="text-slate-300"
+                          >20% Tích Lũy & Đầu Tư (FIRE, Chứng khoán)</span
+                        >
+                        <span class="text-emerald-400 font-semibold">20%</span>
+                      </div>
+                      <div class="w-full bg-slate-800 rounded-full h-2">
+                        <div
+                          class="bg-emerald-500 h-2 rounded-full"
+                          style="width: 20%"
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- PodCast & Self Improvement Recommendations -->
+                <div class="glass-card p-5 rounded-2xl">
+                  <h3
+                    class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-3"
+                  >
+                    Gợi Ý Podcast & Sách Nâng Cấp Tư Duy
+                  </h3>
+                  <div class="space-y-3">
+                    <div
+                      class="flex items-center space-x-3 p-2 rounded-xl bg-slate-800/50"
+                    >
+                      <i class="fa-solid fa-podcast text-pink-400 text-lg"></i>
+                      <div class="overflow-hidden">
+                        <p class="text-xs font-semibold text-white">
+                          The Present Writer - Chi Nguyễn
+                        </p>
+                        <p class="text-[10px] text-slate-400">
+                          Tư duy tối giản, phát triển bản thân & quản lý thời
+                          gian
+                        </p>
+                      </div>
+                    </div>
+                    <div
+                      class="flex items-center space-x-3 p-2 rounded-xl bg-slate-800/50"
+                    >
+                      <i class="fa-solid fa-book text-emerald-400 text-lg"></i>
+                      <div class="overflow-hidden">
+                        <p class="text-xs font-semibold text-white">
+                          Sách: Tâm Lý Học Về Tiền (Morgan Housel)
+                        </p>
+                        <p class="text-[10px] text-slate-400">
+                          Hiểu đúng về bản chất tài chính và tự do trong tư duy
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 4. TAB: LỐI SỐNG THÂN - TÂM - TRÍ (HEALTHY LIFESTYLE) -->
+          <section id="tab-lifestyle-content" class="space-y-6 hidden">
+            <div>
+              <h2 class="text-xl font-bold text-white">
+                Chăm Sóc Sức Khỏe Thân - Tâm - Trí
+              </h2>
+              <p class="text-xs text-slate-400 mt-1">
+                Rèn luyện thể chất, nuôi dưỡng lối sống lành mạnh Eat Clean &
+                Skincare
+              </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <!-- Habit Tracker Widget -->
+              <div class="glass-card p-5 rounded-2xl">
+                <h3
+                  class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-4"
+                >
+                  Habit Tracker Hàng Ngày
+                </h3>
+                <div class="space-y-3" id="habit-container">
+                  <label
+                    class="flex items-center justify-between p-3 rounded-xl bg-slate-800/60 border border-slate-700/50 cursor-pointer"
+                  >
+                    <span class="text-xs text-slate-200"
+                      >Uống đủ 2L nước ngọt / nước khoáng</span
+                    >
+                    <input
+                      type="checkbox"
+                      checked
+                      onchange="updateHabitCount()"
+                      class="rounded border-slate-700 bg-slate-900 text-indigo-500 w-4 h-4"
+                    />
+                  </label>
+                  <label
+                    class="flex items-center justify-between p-3 rounded-xl bg-slate-800/60 border border-slate-700/50 cursor-pointer"
+                  >
+                    <span class="text-xs text-slate-200"
+                      >Tập Gym / Yoga / Pilates 30 phút</span
+                    >
+                    <input
+                      type="checkbox"
+                      checked
+                      onchange="updateHabitCount()"
+                      class="rounded border-slate-700 bg-slate-900 text-indigo-500 w-4 h-4"
+                    />
+                  </label>
+                  <label
+                    class="flex items-center justify-between p-3 rounded-xl bg-slate-800/60 border border-slate-700/50 cursor-pointer"
+                  >
+                    <span class="text-xs text-slate-200"
+                      >Thực hiện đầy đủ Skincare tối</span
+                    >
+                    <input
+                      type="checkbox"
+                      checked
+                      onchange="updateHabitCount()"
+                      class="rounded border-slate-700 bg-slate-900 text-indigo-500 w-4 h-4"
+                    />
+                  </label>
+                  <label
+                    class="flex items-center justify-between p-3 rounded-xl bg-slate-800/60 border border-slate-700/50 cursor-pointer"
+                  >
+                    <span class="text-xs text-slate-200"
+                      >Đọc sách / Nghe Podcast 20 phút</span
+                    >
+                    <input
+                      type="checkbox"
+                      onchange="updateHabitCount()"
+                      class="rounded border-slate-700 bg-slate-900 text-indigo-500 w-4 h-4"
+                    />
+                  </label>
+                  <label
+                    class="flex items-center justify-between p-3 rounded-xl bg-slate-800/60 border border-slate-700/50 cursor-pointer"
+                  >
+                    <span class="text-xs text-slate-200"
+                      >Ngủ trước 23:30 (Tránh thức khuya)</span
+                    >
+                    <input
+                      type="checkbox"
+                      onchange="updateHabitCount()"
+                      class="rounded border-slate-700 bg-slate-900 text-indigo-500 w-4 h-4"
+                    />
+                  </label>
+                </div>
+              </div>
+
+              <!-- Workout Schedule & Plan -->
+              <div class="glass-card p-5 rounded-2xl">
+                <h3
+                  class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-4"
+                >
+                  Lịch Vận Động Trong Tuần
+                </h3>
+                <div class="space-y-2.5">
+                  <div
+                    class="flex items-center justify-between p-2.5 rounded-xl bg-slate-800/40"
+                  >
+                    <div class="flex items-center space-x-3">
+                      <span
+                        class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 font-bold text-xs flex items-center justify-center"
+                        >T2</span
+                      >
+                      <div>
+                        <p class="text-xs font-semibold text-white">
+                          Chạy bộ nhẹ nhàng (Cardio)
+                        </p>
+                        <p class="text-[10px] text-slate-400">
+                          45 Phút • Công viên
+                        </p>
+                      </div>
+                    </div>
+                    <span
+                      class="text-[10px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-full font-medium"
+                      >Hoàn thành</span
+                    >
+                  </div>
+                  <div
+                    class="flex items-center justify-between p-2.5 rounded-xl bg-slate-800/40"
+                  >
+                    <div class="flex items-center space-x-3">
+                      <span
+                        class="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-400 font-bold text-xs flex items-center justify-center"
+                        >T4</span
+                      >
+                      <div>
+                        <p class="text-xs font-semibold text-white">
+                          Tập Pilates / Gym Core
+                        </p>
+                        <p class="text-[10px] text-slate-400">
+                          60 Phút • Studio
+                        </p>
+                      </div>
+                    </div>
+                    <span
+                      class="text-[10px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-full font-medium"
+                      >Lên lịch</span
+                    >
+                  </div>
+                  <div
+                    class="flex items-center justify-between p-2.5 rounded-xl bg-slate-800/40"
+                  >
+                    <div class="flex items-center space-x-3">
+                      <span
+                        class="w-8 h-8 rounded-lg bg-pink-500/20 text-pink-400 font-bold text-xs flex items-center justify-center"
+                        >T6</span
+                      >
+                      <div>
+                        <p class="text-xs font-semibold text-white">
+                          Yoga Giãn Cơ & Thả Lỏng
+                        </p>
+                        <p class="text-[10px] text-slate-400">
+                          30 Phút • Tại nhà
+                        </p>
+                      </div>
+                    </div>
+                    <span
+                      class="text-[10px] bg-slate-700/50 text-slate-400 px-2 py-0.5 rounded-full font-medium"
+                      >Chuẩn bị</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- Eat Clean & Vegan Skincare Suggestions -->
+              <div class="glass-card p-5 rounded-2xl space-y-4">
+                <h3
+                  class="text-xs font-bold text-slate-200 uppercase tracking-wider"
+                >
+                  Lối Sống Lành Mạnh & Thuần Chay
+                </h3>
+
+                <div
+                  class="p-3 bg-teal-950/30 border border-teal-800/30 rounded-xl space-y-2"
+                >
+                  <div
+                    class="flex items-center space-x-2 text-teal-300 font-semibold text-xs"
+                  >
+                    <i class="fa-solid fa-bowl-rice"></i>
+                    <span>Gợi ý Eat-Clean Trong Ngày</span>
+                  </div>
+                  <p class="text-[11px] text-slate-300 leading-relaxed">
+                    Ức gà áp chảo sốt bơ tỏi + Cơm gạo lứt + Bông cải xanh hấp.
+                    Bổ sung sinh tố bơ chuối nguyên chất.
+                  </p>
+                </div>
+
+                <div
+                  class="p-3 bg-pink-950/30 border border-pink-800/30 rounded-xl space-y-2"
+                >
+                  <div
+                    class="flex items-center space-x-2 text-pink-300 font-semibold text-xs"
+                  >
+                    <i class="fa-solid fa-pump-soap"></i>
+                    <span>Skincare Routine Thuần Chay</span>
+                  </div>
+                  <p class="text-[11px] text-slate-300 leading-relaxed">
+                    Ưu tiên mỹ phẩm Vegan, không thử nghiệm trên động vật
+                    (Cruelty-Free). Tập trung dưỡng ẩm & Kem chống nắng phổ
+                    rộng.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+          <!-- 5. TAB: TRẢI NGHIỆM & DU LỊCH (EXPERIENTIAL TRAVEL & DIGITAL NOMAD) -->
+          <section id="tab-travel-content" class="space-y-6 hidden">
+            <div>
+              <h2 class="text-xl font-bold text-white">
+                Trải Nghiệm Du Lịch & Digital Nomad
+              </h2>
+              <p class="text-xs text-slate-400 mt-1">
+                Ưu tiên tích lũy trải nghiệm thay vì chỉ tích trữ tài sản. Kết
+                hợp du lịch & làm việc tự do.
+              </p>
+            </div>
+
+            <!-- Travel Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <!-- Card 1 -->
+              <div class="glass-card rounded-2xl overflow-hidden flex flex-col">
+                <div
+                  class="h-36 bg-gradient-to-r from-emerald-800 to-teal-900 relative p-4 flex flex-col justify-end"
+                >
+                  <span
+                    class="absolute top-3 right-3 px-2 py-1 bg-black/50 backdrop-blur-md rounded-lg text-[10px] text-emerald-300 font-semibold"
+                    >Chữa Lành & Thiên Nhiên</span
+                  >
+                  <h3 class="font-bold text-white text-base">
+                    Đà Lạt - Rừng Mông Dương
+                  </h3>
+                </div>
+                <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+                  <p class="text-xs text-slate-300 leading-relaxed">
+                    Không gian yên tĩnh phù hợp cho Digital Nomad vừa làm việc
+                    remote vừa hít thở không khí thông reo.
+                  </p>
+                  <button
+                    onclick="
+                      showNotice(
+                        'Đã thêm điểm đến Đà Lạt vào danh sách yêu thích',
+                      )
+                    "
+                    class="w-full py-2 bg-slate-800 hover:bg-indigo-600 text-white text-xs font-semibold rounded-xl transition"
+                  >
+                    Lên Kế Hoạch Chuyến Đi
+                  </button>
+                </div>
+              </div>
+
+              <!-- Card 2 -->
+              <div class="glass-card rounded-2xl overflow-hidden flex flex-col">
+                <div
+                  class="h-36 bg-gradient-to-r from-blue-800 to-indigo-900 relative p-4 flex flex-col justify-end"
+                >
+                  <span
+                    class="absolute top-3 right-3 px-2 py-1 bg-black/50 backdrop-blur-md rounded-lg text-[10px] text-cyan-300 font-semibold"
+                    >Phượt & Văn Hóa</span
+                  >
+                  <h3 class="font-bold text-white text-base">
+                    Hà Giang - Yêu Thương Bản H’Mông
+                  </h3>
+                </div>
+                <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+                  <p class="text-xs text-slate-300 leading-relaxed">
+                    Thử thách bản thân qua những cung đường đèo hùng vĩ, giao
+                    lưu văn hóa và vượt khỏi vùng an toàn.
+                  </p>
+                  <button
+                    onclick="
+                      showNotice(
+                        'Đã thêm điểm đến Hà Giang vào danh sách yêu thích',
+                      )
+                    "
+                    class="w-full py-2 bg-slate-800 hover:bg-indigo-600 text-white text-xs font-semibold rounded-xl transition"
+                  >
+                    Lên Kế Hoạch Chuyến Đi
+                  </button>
+                </div>
+              </div>
+
+              <!-- Card 3 -->
+              <div class="glass-card rounded-2xl overflow-hidden flex flex-col">
+                <div
+                  class="h-36 bg-gradient-to-r from-purple-800 to-pink-900 relative p-4 flex flex-col justify-end"
+                >
+                  <span
+                    class="absolute top-3 right-3 px-2 py-1 bg-black/50 backdrop-blur-md rounded-lg text-[10px] text-pink-300 font-semibold"
+                    >Workation Biển</span
+                  >
+                  <h3 class="font-bold text-white text-base">
+                    Đà Nẵng & Hội An
+                  </h3>
+                </div>
+                <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+                  <p class="text-xs text-slate-300 leading-relaxed">
+                    Sự kết hợp hoàn hảo giữa nhịp sống hiện đại, quán cafe đẹp
+                    ngắm biển và sự yên bình của phố cổ.
+                  </p>
+                  <button
+                    onclick="
+                      showNotice(
+                        'Đã thêm điểm đến Đà Nẵng vào danh sách yêu thích',
+                      )
+                    "
+                    class="w-full py-2 bg-slate-800 hover:bg-indigo-600 text-white text-xs font-semibold rounded-xl transition"
+                  >
+                    Lên Kế Hoạch Chuyến Đi
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 6. TAB: GIẢI TRÍ SỐ & KHÔNG GIAN CAFE CÓ GU -->
+          <section id="tab-entertainment-content" class="space-y-6 hidden">
+            <div>
+              <h2 class="text-xl font-bold text-white">
+                Giải Trí Số & Không Gian Cà Phê Có Gu
+              </h2>
+              <p class="text-xs text-slate-400 mt-1">
+                Khám phá quán cafe check-in tuyệt đẹp, không gian làm việc
+                truyền cảm hứng & Playlist thư giãn
+              </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <!-- Aesthetic Cafe List -->
+              <div class="glass-card p-5 rounded-2xl space-y-4">
+                <h3
+                  class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-2"
+                >
+                  Gợi Ý Quán Cà Phê Làm Việc & Check-in
+                </h3>
+
+                <div class="space-y-3">
+                  <div
+                    class="p-3 bg-slate-800/50 rounded-xl flex items-center justify-between border border-slate-700/50"
+                  >
+                    <div class="flex items-center space-x-3">
+                      <div
+                        class="w-10 h-10 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold text-sm"
+                      >
+                        <i class="fa-solid fa-mug-saucer"></i>
+                      </div>
+                      <div>
+                        <p class="text-xs font-bold text-white">
+                          The Workshop Coffee
+                        </p>
+                        <p class="text-[10px] text-slate-400">
+                          Quận 1, TP.HCM • Phong cách Industrial, ổ điện tận bàn
+                        </p>
+                      </div>
+                    </div>
+                    <span
+                      class="text-[10px] bg-amber-500/10 text-amber-300 px-2 py-1 rounded-md font-medium"
+                      >Làm việc mượt</span
+                    >
+                  </div>
+
+                  <div
+                    class="p-3 bg-slate-800/50 rounded-xl flex items-center justify-between border border-slate-700/50"
+                  >
+                    <div class="flex items-center space-x-3">
+                      <div
+                        class="w-10 h-10 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold text-sm"
+                      >
+                        <i class="fa-solid fa-camera"></i>
+                      </div>
+                      <div>
+                        <p class="text-xs font-bold text-white">
+                          Rii Coffee & Minimalist Concept
+                        </p>
+                        <p class="text-[10px] text-slate-400">
+                          Ba Đình, Hà Nội • Tone xám tối giản, cực gu để photo
+                          check-in
+                        </p>
+                      </div>
+                    </div>
+                    <span
+                      class="text-[10px] bg-purple-500/10 text-purple-300 px-2 py-1 rounded-md font-medium"
+                      >Check-in đẹp</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- Chill Digital Streaming & Playlist -->
+              <div class="glass-card p-5 rounded-2xl space-y-4">
+                <h3
+                  class="text-xs font-bold text-slate-200 uppercase tracking-wider mb-2"
+                >
+                  Playlist Âm Nhạc Chill & Giải Trí Số
+                </h3>
+
+                <div class="space-y-3">
+                  <div
+                    class="p-3 bg-emerald-950/30 border border-emerald-800/30 rounded-xl flex items-center justify-between"
+                  >
+                    <div class="flex items-center space-x-3">
+                      <i
+                        class="fa-brands fa-spotify text-emerald-400 text-2xl"
+                      ></i>
+                      <div>
+                        <p class="text-xs font-bold text-white">
+                          Gen-Z Chill Indie Vietnamese
+                        </p>
+                        <p class="text-[10px] text-slate-400">
+                          Vũ, Ngot, Chillies, Trang, Minh
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onclick="
+                        showNotice('Đang phát Playlist Spotify Gen-Z Chill')
+                      "
+                      class="p-2 text-emerald-400 hover:text-emerald-300"
+                    >
+                      <i class="fa-solid fa-circle-play text-xl"></i>
+                    </button>
+                  </div>
+
+                  <div
+                    class="p-3 bg-rose-950/30 border border-rose-800/30 rounded-xl flex items-center justify-between"
+                  >
+                    <div class="flex items-center space-x-3">
+                      <i
+                        class="fa-brands fa-youtube text-rose-400 text-2xl"
+                      ></i>
+                      <div>
+                        <p class="text-xs font-bold text-white">
+                          Lofi Hip Hop - Beats to Relax/Study
+                        </p>
+                        <p class="text-[10px] text-slate-400">
+                          Âm nhạc không lời tập trung làm việc
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      onclick="showNotice('Đang mở Lofi Hip Hop Stream')"
+                      class="p-2 text-rose-400 hover:text-rose-300"
+                    >
+                      <i class="fa-solid fa-circle-play text-xl"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <!-- NOTIFICATION TOAST -->
+    <div
+      id="toast-notification"
+      class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 glass-panel border border-indigo-500/40 px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3"
+    >
+      <i
+        class="fa-solid fa-circle-info text-indigo-400 text-base"
+        id="toast-icon"
+      ></i>
+      <span class="text-xs font-medium text-slate-200" id="toast-message"
+        >Thông báo ứng dụng</span
+      >
+    </div>
+  </body>
+</html>
